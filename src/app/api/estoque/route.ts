@@ -1,10 +1,9 @@
 export const runtime = "nodejs";
 
 import type { NextRequest } from "next/server";
-import { readJSON, writeJSON } from "@/lib/server/fsdb";
+import { rgetJSON, rsetJSON } from "@/lib/server/redis";
+import { Unidade } from "@/components/StockManager";
 
-/** Tipos */
-type Unidade = "g" | "ml" | "un";
 export interface StockItem {
   item: string;
   unidade: Unidade;
@@ -14,53 +13,39 @@ interface EstoqueData {
   itens: StockItem[];
 }
 
-/** Helpers de validação */
-function isUnidade(x: unknown): x is Unidade {
-  return x === "g" || x === "ml" || x === "un";
-}
-function isStockItem(x: unknown): x is StockItem {
-  const o = x as Partial<StockItem>;
-  return (
-    !!o &&
-    typeof o.item === "string" &&
-    isUnidade(o.unidade) &&
-    typeof o.quantidade === "number"
-  );
-}
+const KEY = "estoque:list:v1";
 
-const FILE = "estoque.json";
+async function getState() {
+  return rgetJSON<EstoqueData>(KEY, { itens: [] });
+}
+async function setState(d: EstoqueData) {
+  await rsetJSON(KEY, d);
+}
 
 export async function GET() {
-  const data = await readJSON<EstoqueData>(FILE, { itens: [] });
+  const data = await getState();
   return Response.json(data, { status: 200 });
 }
 
 type PostBody = StockItem;
-function isPostBody(x: unknown): x is PostBody {
-  return isStockItem(x);
-}
-
 export async function POST(req: NextRequest) {
-  const bodyUnknown: unknown = await req.json();
-  if (!isPostBody(bodyUnknown)) {
-    return new Response("payload inválido", { status: 400 });
-  }
-  const body = bodyUnknown;
+  const b = (await req.json()) as PostBody;
+  if (!b?.item || !b?.unidade)
+    return new Response("item/unidade obrigatórios", { status: 400 });
 
-  const data = await readJSON<EstoqueData>(FILE, { itens: [] });
+  const data = await getState();
   const found = data.itens.find(
-    (x) => x.item === body.item && x.unidade === body.unidade
+    (x) => x.item === b.item && x.unidade === b.unidade
   );
-  if (found) {
-    found.quantidade += Number(body.quantidade) || 0;
-  } else {
+  if (found) found.quantidade += Number(b.quantidade) || 0;
+  else
     data.itens.push({
-      item: body.item,
-      unidade: body.unidade,
-      quantidade: Number(body.quantidade) || 0,
+      item: b.item,
+      unidade: b.unidade,
+      quantidade: Number(b.quantidade) || 0,
     });
-  }
-  await writeJSON(FILE, data);
+
+  await setState(data);
   return Response.json({ ok: true });
 }
 
@@ -70,61 +55,44 @@ type PatchBody = {
   quantidade?: number;
   delta?: number;
 };
-function isPatchBody(x: unknown): x is PatchBody {
-  const o = x as PatchBody;
-  return !!o && typeof o.item === "string" && isUnidade(o.unidade);
-}
-
 export async function PATCH(req: NextRequest) {
-  const bodyUnknown: unknown = await req.json();
-  if (!isPatchBody(bodyUnknown)) {
-    return new Response("payload inválido", { status: 400 });
-  }
-  const body = bodyUnknown;
+  const b = (await req.json()) as PatchBody;
+  if (!b?.item || !b?.unidade)
+    return new Response("item/unidade obrigatórios", { status: 400 });
 
-  const data = await readJSON<EstoqueData>(FILE, { itens: [] });
+  const data = await getState();
   const idx = data.itens.findIndex(
-    (x) => x.item === body.item && x.unidade === body.unidade
+    (x) => x.item === b.item && x.unidade === b.unidade
   );
-
   if (idx === -1) {
     data.itens.push({
-      item: body.item,
-      unidade: body.unidade,
-      quantidade: Number(body.quantidade) || 0,
+      item: b.item,
+      unidade: b.unidade,
+      quantidade: Number(b.quantidade) || 0,
     });
   } else {
-    if (typeof body.quantidade === "number") {
-      data.itens[idx].quantidade = Number(body.quantidade);
-    }
-    if (typeof body.delta === "number") {
+    if (typeof b.quantidade === "number")
+      data.itens[idx].quantidade = Number(b.quantidade);
+    if (typeof b.delta === "number")
       data.itens[idx].quantidade = Math.max(
         0,
-        Number(data.itens[idx].quantidade || 0) + body.delta
+        Number(data.itens[idx].quantidade || 0) + b.delta
       );
-    }
   }
-  await writeJSON(FILE, data);
+  await setState(data);
   return Response.json({ ok: true });
 }
 
 type DeleteBody = { item: string; unidade: Unidade };
-function isDeleteBody(x: unknown): x is DeleteBody {
-  const o = x as DeleteBody;
-  return !!o && typeof o.item === "string" && isUnidade(o.unidade);
-}
-
 export async function DELETE(req: NextRequest) {
-  const bodyUnknown: unknown = await req.json();
-  if (!isDeleteBody(bodyUnknown)) {
-    return new Response("payload inválido", { status: 400 });
-  }
-  const body = bodyUnknown;
+  const b = (await req.json()) as DeleteBody;
+  if (!b?.item || !b?.unidade)
+    return new Response("item/unidade obrigatórios", { status: 400 });
 
-  const data = await readJSON<EstoqueData>(FILE, { itens: [] });
+  const data = await getState();
   data.itens = data.itens.filter(
-    (x) => !(x.item === body.item && x.unidade === body.unidade)
+    (x) => !(x.item === b.item && x.unidade === b.unidade)
   );
-  await writeJSON(FILE, data);
+  await setState(data);
   return Response.json({ ok: true });
 }
