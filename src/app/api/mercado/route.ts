@@ -33,12 +33,13 @@ function isMarketItem(x: unknown): x is MarketItem {
 const FILE = "mercado.json";
 
 function seed(): MercadoData {
-  return {
-    lista: listaMercadoConsolidada.map((i) => ({
-      ...i,
-      comprado: false,
-    })),
-  };
+  const lista: MarketItem[] = listaMercadoConsolidada.map((i) => ({
+    item: i.item,
+    unidade: i.unidade as Unidade, // garante o literal type
+    quantidade: i.quantidade,
+    comprado: false,
+  }));
+  return { lista };
 }
 
 export async function GET() {
