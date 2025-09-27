@@ -1,21 +1,49 @@
-// src/app/api/mercado/route.ts
 export const runtime = "nodejs";
 
-import { NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
 import { readJSON, writeJSON } from "@/lib/server/fsdb";
 import { listaMercadoConsolidada } from "@/lib/data";
 
+/** Tipos */
+type Unidade = "g" | "ml" | "un";
+export interface MarketItem {
+  item: string;
+  unidade: Unidade;
+  quantidade: number;
+  comprado?: boolean;
+}
+interface MercadoData {
+  lista: MarketItem[];
+}
+
+/** Helpers de validação */
+function isUnidade(x: unknown): x is Unidade {
+  return x === "g" || x === "ml" || x === "un";
+}
+function isMarketItem(x: unknown): x is MarketItem {
+  const o = x as Partial<MarketItem>;
+  return (
+    !!o &&
+    typeof o.item === "string" &&
+    isUnidade(o.unidade) &&
+    typeof o.quantidade === "number"
+  );
+}
+
 const FILE = "mercado.json";
 
-function seed() {
+function seed(): MercadoData {
   return {
-    lista: listaMercadoConsolidada.map((i) => ({ ...i, comprado: false })),
+    lista: listaMercadoConsolidada.map((i) => ({
+      ...i,
+      comprado: false,
+    })),
   };
 }
 
 export async function GET() {
-  let data = await readJSON<{ lista: any[] }>(FILE, seed());
-  // Se existir mas estiver vazio, popular com o seed:
+  let data = await readJSON<MercadoData>(FILE, seed());
+  // Se o arquivo existir mas estiver vazio, re-seed
   if (!Array.isArray(data.lista) || data.lista.length === 0) {
     data = seed();
     await writeJSON(FILE, data);
@@ -23,34 +51,52 @@ export async function GET() {
   return Response.json(data, { status: 200 });
 }
 
-// Reseed manual: sobrescreve com o seed
+type PatchBody = {
+  item: string;
+  unidade: Unidade;
+  comprado?: boolean;
+  quantidade?: number;
+};
+function isPatchBody(x: unknown): x is PatchBody {
+  const o = x as PatchBody;
+  return !!o && typeof o.item === "string" && isUnidade(o.unidade);
+}
+
+export async function PATCH(req: NextRequest) {
+  const bodyUnknown: unknown = await req.json();
+  if (!isPatchBody(bodyUnknown)) {
+    return new Response("payload inválido", { status: 400 });
+  }
+  const body = bodyUnknown;
+
+  const data = await readJSON<MercadoData>(FILE, seed());
+  const idx = data.lista.findIndex(
+    (x) => x.item === body.item && x.unidade === body.unidade
+  );
+
+  if (idx === -1) {
+    data.lista.push({
+      item: body.item,
+      unidade: body.unidade,
+      quantidade: typeof body.quantidade === "number" ? body.quantidade : 0,
+      comprado: !!body.comprado,
+    });
+  } else {
+    if (typeof body.comprado === "boolean") {
+      data.lista[idx].comprado = body.comprado;
+    }
+    if (typeof body.quantidade === "number") {
+      data.lista[idx].quantidade = body.quantidade;
+    }
+  }
+
+  await writeJSON(FILE, data);
+  return Response.json({ ok: true });
+}
+
+/** Opcional: re-seed manual via POST */
 export async function POST() {
   const data = seed();
   await writeJSON(FILE, data);
   return Response.json({ ok: true, seeded: data.lista.length });
-}
-
-export async function PATCH(req: NextRequest) {
-  const body = await req.json();
-  const { item, unidade, comprado, quantidade } = body || {};
-  if (!item || !unidade)
-    return new Response("item/unidade obrigatórios", { status: 400 });
-
-  const data = await readJSON<{ lista: any[] }>(FILE, seed());
-  const idx = data.lista.findIndex(
-    (x: any) => x.item === item && x.unidade === unidade
-  );
-  if (idx === -1) {
-    data.lista.push({
-      item,
-      unidade,
-      quantidade: quantidade ?? 0,
-      comprado: !!comprado,
-    });
-  } else {
-    if (typeof comprado === "boolean") data.lista[idx].comprado = comprado;
-    if (typeof quantidade === "number") data.lista[idx].quantidade = quantidade;
-  }
-  await writeJSON(FILE, data);
-  return Response.json({ ok: true });
 }
