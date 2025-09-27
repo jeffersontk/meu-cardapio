@@ -1,0 +1,226 @@
+{
+  "lista": [
+    {
+      "item": "Arroz branco",
+      "unidade": "g",
+      "quantidade": 1440,
+      "comprado": false
+    },
+    {
+      "item": "Feijão carioca (cozido)",
+      "unidade": "g",
+      "quantidade": 290,
+      "comprado": false
+    },
+    {
+      "item": "Feijão preto (cozido)",
+      "unidade": "g",
+      "quantidade": 300,
+      "comprado": false
+    },
+    {
+      "item": "Lentilha (cozida)",
+      "unidade": "g",
+      "quantidade": 280,
+      "comprado": false
+    },
+    {
+      "item": "Grão-de-bico (cozido)",
+      "unidade": "g",
+      "quantidade": 260,
+      "comprado": false
+    },
+    {
+      "item": "Peito de frango",
+      "unidade": "g",
+      "quantidade": 1120,
+      "comprado": false
+    },
+    {
+      "item": "Peito de frango (pizza)",
+      "unidade": "g",
+      "quantidade": 180,
+      "comprado": false
+    },
+    {
+      "item": "Carne moída bovina",
+      "unidade": "g",
+      "quantidade": 1400,
+      "comprado": false
+    },
+    {
+      "item": "Filé suíno",
+      "unidade": "g",
+      "quantidade": 820,
+      "comprado": false
+    },
+    {
+      "item": "Atum (em água)",
+      "unidade": "g",
+      "quantidade": 90,
+      "comprado": false
+    },
+    {
+      "item": "Ovos",
+      "unidade": "un",
+      "quantidade": 25,
+      "comprado": false
+    },
+    {
+      "item": "Iogurte natural",
+      "unidade": "g",
+      "quantidade": 1000,
+      "comprado": false
+    },
+    {
+      "item": "Leite",
+      "unidade": "ml",
+      "quantidade": 1200,
+      "comprado": false
+    },
+    {
+      "item": "Suco de laranja (in natura)",
+      "unidade": "ml",
+      "quantidade": 900,
+      "comprado": false
+    },
+    {
+      "item": "Suco de acerola (in natura)",
+      "unidade": "ml",
+      "quantidade": 900,
+      "comprado": false
+    },
+    {
+      "item": "Pão integral",
+      "unidade": "g",
+      "quantidade": 650,
+      "comprado": false
+    },
+    {
+      "item": "Goma de tapioca",
+      "unidade": "g",
+      "quantidade": 140,
+      "comprado": false
+    },
+    {
+      "item": "Cuscuz (flocão cozido)",
+      "unidade": "g",
+      "quantidade": 180,
+      "comprado": false
+    },
+    {
+      "item": "Purê de batata-doce (cozida)",
+      "unidade": "g",
+      "quantidade": 1040,
+      "comprado": false
+    },
+    {
+      "item": "Massa para pizza",
+      "unidade": "g",
+      "quantidade": 430,
+      "comprado": false
+    },
+    {
+      "item": "Aveia em flocos",
+      "unidade": "g",
+      "quantidade": 180,
+      "comprado": false
+    },
+    {
+      "item": "Granola",
+      "unidade": "g",
+      "quantidade": 120,
+      "comprado": false
+    },
+    {
+      "item": "Queijo minas",
+      "unidade": "g",
+      "quantidade": 180,
+      "comprado": false
+    },
+    {
+      "item": "Queijo muçarela (pizza)",
+      "unidade": "g",
+      "quantidade": 90,
+      "comprado": false
+    },
+    {
+      "item": "Mamão",
+      "unidade": "g",
+      "quantidade": 1400,
+      "comprado": false
+    },
+    {
+      "item": "Banana",
+      "unidade": "g",
+      "quantidade": 510,
+      "comprado": false
+    },
+    {
+      "item": "Maçã",
+      "unidade": "g",
+      "quantidade": 230,
+      "comprado": false
+    },
+    {
+      "item": "Morangos",
+      "unidade": "g",
+      "quantidade": 460,
+      "comprado": false
+    },
+    {
+      "item": "Frutas variadas (mix)",
+      "unidade": "g",
+      "quantidade": 240,
+      "comprado": false
+    },
+    {
+      "item": "Brócolis",
+      "unidade": "g",
+      "quantidade": 520,
+      "comprado": false
+    },
+    {
+      "item": "Abobrinha",
+      "unidade": "g",
+      "quantidade": 260,
+      "comprado": false
+    },
+    {
+      "item": "Couve",
+      "unidade": "g",
+      "quantidade": 780,
+      "comprado": false
+    },
+    {
+      "item": "Cenoura",
+      "unidade": "g",
+      "quantidade": 520,
+      "comprado": false
+    },
+    {
+      "item": "Abóbora",
+      "unidade": "g",
+      "quantidade": 520,
+      "comprado": true
+    },
+    {
+      "item": "Beterraba",
+      "unidade": "g",
+      "quantidade": 260,
+      "comprado": false
+    },
+    {
+      "item": "Espinafre",
+      "unidade": "g",
+      "quantidade": 150,
+      "comprado": false
+    },
+    {
+      "item": "Vagem",
+      "unidade": "g",
+      "quantidade": 260,
+      "comprado": false
+    }
+  ]
+}
