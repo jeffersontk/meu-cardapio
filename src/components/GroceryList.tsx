@@ -181,7 +181,9 @@ export default function GroceryList() {
       map.get(c)!.push(r);
     }
     // ordena itens dentro de cada categoria
-    for (const [c, arr] of map) arr.sort((a, b) => a.item.localeCompare(b.item));
+    for (const arr of map.values()) {
+      arr.sort((a, b) => a.item.localeCompare(b.item));
+    }
     // retorna na ordem de CATEGORIAS_ORDER
     return CATEGORIAS_ORDER
       .map(c => ({ cat: c, itens: map.get(c) || [] }))
@@ -373,7 +375,9 @@ export default function GroceryList() {
                           <select
                             className="rounded-lg border border-slate-600 bg-slate-800/60 px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                             value={e?.measure ?? "un"}
-                            onChange={(ev) => setMeasure(r, ev.target.value as any)}
+                            onChange={(ev: React.ChangeEvent<HTMLSelectElement>) =>
+                              setMeasure(r, ev.target.value as MedidaCompra)
+                            }
                             aria-label={`Medida da compra de ${r.item}`}
                           >
                             <option value="un">un</option>
