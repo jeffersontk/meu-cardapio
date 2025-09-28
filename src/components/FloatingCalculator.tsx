@@ -19,11 +19,17 @@ export default function FloatingCalculator({
   setOpen: (v: boolean) => void;
 }) {
   return (
-    <div
-      className="fixed bottom-4 right-4 z-50 w-[min(92vw,320px)] rounded-2xl border border-slate-700 bg-slate-900/80 p-3 backdrop-blur-md shadow-xl"
-      role="complementary"
-      aria-label="Calculadora de preços"
-    >
+    <div   className="
+    fixed
+    right-4
+    z-50
+    w-[min(92vw,340px)]
+    rounded-2xl border border-slate-700 bg-slate-900/85 p-3 backdrop-blur-md shadow-xl
+    bottom-[calc(5rem+env(safe-area-inset-bottom))] 
+    md:bottom-6
+  "
+  role="complementary"
+  aria-label="Calculadora de preços">
       <div className="flex items-center justify-between gap-2">
         <h4 className="text-sm font-semibold">Calculadora</h4>
         <div className="flex items-center gap-2">
