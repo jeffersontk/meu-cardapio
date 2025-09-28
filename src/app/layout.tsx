@@ -1,6 +1,5 @@
 import MobileBottomNav from "@/components/MobileBottomNav";
 import "../styles/globals.css";
-import Link from "next/link";
 import DesktopTopNav from "@/components/DesktopTopNav";
 
 export const metadata = {
